@@ -11,23 +11,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.sergi.tfg_app.ui.components.ErrorMessage
+import com.sergi.tfg_app.ui.screens.auth.AuthState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
-    onBackClick: () -> Unit,
-    onRegisterClick: () -> Unit
+    viewModel: RegisterViewModel,
+    onRegisterSuccess: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val registerState by viewModel.registerState.collectAsState()
+
+    // Navegar cuando el registro es exitoso
+    LaunchedEffect(registerState) {
+        if (registerState is AuthState.Success) {
+            onRegisterSuccess()
+            viewModel.resetState()
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Registro") },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(
+                        onClick = onBackClick,
+                        enabled = registerState !is AuthState.Loading
+                    ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Volver"
@@ -50,6 +66,7 @@ fun RegisterScreen(
                 onValueChange = { username = it },
                 label = { Text("Usuario") },
                 singleLine = true,
+                enabled = registerState !is AuthState.Loading,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -61,6 +78,7 @@ fun RegisterScreen(
                 label = { Text("Email") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
+                enabled = registerState !is AuthState.Loading,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -69,20 +87,35 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Contrasena") },
+                label = { Text("Contraseña") },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
+                enabled = registerState !is AuthState.Loading,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            // Mostrar error si existe
+            if (registerState is AuthState.Error) {
+                ErrorMessage(message = (registerState as AuthState.Error).message)
+            }
 
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = onRegisterClick,
+                onClick = { viewModel.register(username, email, password) },
+                enabled = registerState !is AuthState.Loading,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Registrarse")
+                if (registerState is AuthState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Registrarse")
+                }
             }
         }
     }

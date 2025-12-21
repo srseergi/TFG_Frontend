@@ -9,14 +9,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.sergi.tfg_app.ui.components.ErrorMessage
+import com.sergi.tfg_app.ui.screens.auth.AuthState
 
 @Composable
 fun LoginScreen(
-    onLoginClick: () -> Unit,
+    viewModel: LoginViewModel,
+    onLoginSuccess: () -> Unit,
     onRegisterClick: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val loginState by viewModel.loginState.collectAsState()
+
+    // Navegar cuando el login es exitoso
+    LaunchedEffect(loginState) {
+        if (loginState is AuthState.Success) {
+            onLoginSuccess()
+            viewModel.resetState()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -34,11 +47,11 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(48.dp))
 
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            value = username,
+            onValueChange = { username = it },
+            label = { Text("Usuario") },
             singleLine = true,
+            enabled = loginState !is AuthState.Loading,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -51,21 +64,39 @@ fun LoginScreen(
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true,
+            enabled = loginState !is AuthState.Loading,
             modifier = Modifier.fillMaxWidth()
         )
+
+        // Mostrar error si existe
+        if (loginState is AuthState.Error) {
+            ErrorMessage(message = (loginState as AuthState.Error).message)
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
         Button(
-            onClick = onLoginClick,
+            onClick = { viewModel.login(username, password) },
+            enabled = loginState !is AuthState.Loading,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Iniciar sesión")
+            if (loginState is AuthState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text("Iniciar sesión")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = onRegisterClick) {
+        TextButton(
+            onClick = onRegisterClick,
+            enabled = loginState !is AuthState.Loading
+        ) {
             Text("No tienes cuenta? Regístrate")
         }
     }
