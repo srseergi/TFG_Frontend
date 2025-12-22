@@ -1,6 +1,8 @@
 package com.sergi.tfg_app.data.remote
 
 import com.sergi.tfg_app.data.remote.api.AuthApi
+import com.sergi.tfg_app.data.remote.api.CvApi
+import com.sergi.tfg_app.data.remote.interceptor.AuthInterceptor
 import com.sergi.tfg_app.util.Constants
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -20,18 +22,40 @@ object RetrofitClient {
         level = HttpLoggingInterceptor.Level.HEADERS
     }
 
-    private val okHttpClient = OkHttpClient.Builder()
+    // Cliente sin autenticación (para login y register)
+    private val publicOkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
         .build()
 
-    private val retrofit = Retrofit.Builder()
+    private val publicRetrofit = Retrofit.Builder()
         .baseUrl(Constants.BASE_URL)
-        .client(okHttpClient)
+        .client(publicOkHttpClient)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
 
-    val authApi: AuthApi = retrofit.create(AuthApi::class.java)
+    val authApi: AuthApi = publicRetrofit.create(AuthApi::class.java)
+
+    // Cliente con autenticación (para endpoints protegidos)
+    fun createAuthenticatedCvApi(tokenProvider: () -> String?): CvApi {
+        val authInterceptor = AuthInterceptor(tokenProvider)
+
+        val authenticatedClient = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build()
+
+        val authenticatedRetrofit = Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .client(authenticatedClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+
+        return authenticatedRetrofit.create(CvApi::class.java)
+    }
 }
