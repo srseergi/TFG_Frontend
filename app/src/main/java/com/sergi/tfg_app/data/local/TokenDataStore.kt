@@ -19,6 +19,7 @@ class TokenDataStore(private val context: Context) {
         private val USER_ID = stringPreferencesKey("user_id")
         private val USERNAME = stringPreferencesKey("username")
         private val EMAIL = stringPreferencesKey("email")
+        private val SCRAPER_ID = stringPreferencesKey("scraper_id")
     }
 
     suspend fun saveTokens(access: String, refresh: String) {
@@ -58,6 +59,22 @@ class TokenDataStore(private val context: Context) {
 
     fun isLoggedIn(): Flow<Boolean> = context.dataStore.data.map { prefs ->
         prefs[ACCESS_TOKEN] != null
+    }
+
+    suspend fun saveScraperId(scraperId: String) {
+        context.dataStore.edit { prefs ->
+            prefs[SCRAPER_ID] = scraperId
+        }
+    }
+
+    fun getScraperId(): Flow<String?> = context.dataStore.data.map { prefs ->
+        prefs[SCRAPER_ID]
+    }
+
+    suspend fun clearScraperId() {
+        context.dataStore.edit { prefs ->
+            prefs.remove(SCRAPER_ID)
+        }
     }
 
     suspend fun clear() {
