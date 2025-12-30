@@ -42,7 +42,10 @@ class CvDetailViewModel(
                         title = cv.title,
                         position = cv.position,
                         pdfFileUrl = cv.pdfFileUrl,
-                        feedback = cv.feedback
+                        feedback = cv.feedback,
+                        originalTitle = cv.originalCv.title,
+                        originalPosition = cv.originalCv.position,
+                        originalPdfFileUrl = cv.originalCv.pdfFileUrl
                     )
                 }
                 .onFailure { error ->
@@ -67,10 +70,10 @@ class CvDetailViewModel(
             _state.value = _state.value.copy(downloadState = DownloadState.Downloading)
 
             try {
-                val pdfFile = downloadPdf(context, pdfUrl)
+                val pdfFile = downloadPdf(context, pdfUrl, "improved_${cvId}.pdf")
                 if (pdfFile != null) {
                     _state.value = _state.value.copy(downloadState = DownloadState.Success)
-                    openPdfFile(context, pdfFile)
+                    openPdfFile(context, pdfFile, isImproved = true)
                 } else {
                     _state.value = _state.value.copy(
                         downloadState = DownloadState.Error("Error al descargar el PDF")
@@ -84,7 +87,37 @@ class CvDetailViewModel(
         }
     }
 
-    private suspend fun downloadPdf(context: Context, url: String): File? {
+    fun downloadAndOpenOriginalPdf(context: Context) {
+        val pdfUrl = _state.value.originalPdfFileUrl
+        if (pdfUrl.isBlank()) {
+            _state.value = _state.value.copy(
+                originalDownloadState = DownloadState.Error("URL del PDF no disponible")
+            )
+            return
+        }
+
+        viewModelScope.launch {
+            _state.value = _state.value.copy(originalDownloadState = DownloadState.Downloading)
+
+            try {
+                val pdfFile = downloadPdf(context, pdfUrl, "original_${cvId}.pdf")
+                if (pdfFile != null) {
+                    _state.value = _state.value.copy(originalDownloadState = DownloadState.Success)
+                    openPdfFile(context, pdfFile, isImproved = false)
+                } else {
+                    _state.value = _state.value.copy(
+                        originalDownloadState = DownloadState.Error("Error al descargar el PDF")
+                    )
+                }
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(
+                    originalDownloadState = DownloadState.Error(e.message ?: "Error desconocido")
+                )
+            }
+        }
+    }
+
+    private suspend fun downloadPdf(context: Context, url: String, fileName: String): File? {
         return withContext(Dispatchers.IO) {
             try {
                 val request = Request.Builder()
@@ -102,7 +135,6 @@ class CvDetailViewModel(
                     pdfDir.mkdirs()
                 }
 
-                val fileName = "cv_${cvId}.pdf"
                 val pdfFile = File(pdfDir, fileName)
 
                 response.body?.byteStream()?.use { inputStream ->
@@ -118,7 +150,7 @@ class CvDetailViewModel(
         }
     }
 
-    private fun openPdfFile(context: Context, file: File) {
+    private fun openPdfFile(context: Context, file: File, isImproved: Boolean) {
         try {
             val uri: Uri = FileProvider.getUriForFile(
                 context,
@@ -133,14 +165,24 @@ class CvDetailViewModel(
 
             context.startActivity(Intent.createChooser(intent, "Abrir PDF con..."))
         } catch (e: Exception) {
-            _state.value = _state.value.copy(
-                downloadState = DownloadState.Error("No se encontró una app para abrir PDFs")
-            )
+            if (isImproved) {
+                _state.value = _state.value.copy(
+                    downloadState = DownloadState.Error("No se encontró una app para abrir PDFs")
+                )
+            } else {
+                _state.value = _state.value.copy(
+                    originalDownloadState = DownloadState.Error("No se encontró una app para abrir PDFs")
+                )
+            }
         }
     }
 
     fun resetDownloadState() {
         _state.value = _state.value.copy(downloadState = DownloadState.Idle)
+    }
+
+    fun resetOriginalDownloadState() {
+        _state.value = _state.value.copy(originalDownloadState = DownloadState.Idle)
     }
 
     fun retry() {

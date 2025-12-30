@@ -57,6 +57,9 @@
     <string name="cv_detail_title">Detall CV</string>
     <string name="downloading">Descarregant…</string>
     <string name="view_improved_pdf">Veure PDF millorat</string>
+    <string name="view_original_pdf">Veure PDF original</string>
+    <string name="original_cv_title">CV Original</string>
+    <string name="position_label">Posició: %1$s</string>
     <string name="section_meets">Compleix</string>
     <string name="section_does_not_meet">No Compleix</string>
     <string name="section_recommendations">Recomanacions</string>
