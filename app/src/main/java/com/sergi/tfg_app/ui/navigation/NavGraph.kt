@@ -117,6 +117,9 @@ fun NavGraph(navController: NavHostController) {
                     },
                     onRegisterClick = {
                         navController.navigate(Routes.Register.route)
+                    },
+                    onLanguageChange = { languageCode ->
+                        authRepository.saveLanguage(languageCode)
                     }
                 )
             }
@@ -131,6 +134,9 @@ fun NavGraph(navController: NavHostController) {
                     },
                     onBackClick = {
                         navController.popBackStack()
+                    },
+                    onLanguageChange = { languageCode ->
+                        authRepository.saveLanguage(languageCode)
                     }
                 )
             }

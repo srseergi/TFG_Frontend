@@ -13,8 +13,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.sergi.tfg_app.R
 import com.sergi.tfg_app.ui.theme.BluePrimary
 import com.sergi.tfg_app.ui.theme.GrayLight
 import com.sergi.tfg_app.ui.theme.GrayMedium
@@ -32,11 +34,11 @@ fun CvDetailScreen(
     if (state.downloadState is DownloadState.Error) {
         AlertDialog(
             onDismissRequest = { viewModel.resetDownloadState() },
-            title = { Text("Error") },
+            title = { Text(stringResource(R.string.error)) },
             text = { Text((state.downloadState as DownloadState.Error).message) },
             confirmButton = {
                 TextButton(onClick = { viewModel.resetDownloadState() }) {
-                    Text("Aceptar")
+                    Text(stringResource(R.string.accept))
                 }
             }
         )
@@ -45,12 +47,12 @@ fun CvDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.title.ifEmpty { "Detalle CV" }) },
+                title = { Text(state.title.ifEmpty { stringResource(R.string.cv_detail_title) }) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }
@@ -78,12 +80,12 @@ fun CvDetailScreen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = state.error ?: "Error desconocido",
+                            text = state.error ?: stringResource(R.string.unknown_error),
                             color = MaterialTheme.colorScheme.error
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = { viewModel.retry() }) {
-                            Text("Reintentar")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -138,9 +140,9 @@ fun CvDetailScreen(
                                             strokeWidth = 2.dp
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text("Descargando...")
+                                        Text(stringResource(R.string.downloading))
                                     } else {
-                                        Text("Ver PDF mejorado")
+                                        Text(stringResource(R.string.view_improved_pdf))
                                     }
                                 }
                             }
@@ -151,7 +153,7 @@ fun CvDetailScreen(
                     if (feedback != null && feedback.cumple.isNotEmpty()) {
                         item {
                             SectionHeader(
-                                title = "Cumple",
+                                title = stringResource(R.string.section_meets),
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -164,7 +166,7 @@ fun CvDetailScreen(
                     if (feedback != null && feedback.noCumple.isNotEmpty()) {
                         item {
                             SectionHeader(
-                                title = "No Cumple",
+                                title = stringResource(R.string.section_does_not_meet),
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
@@ -177,7 +179,7 @@ fun CvDetailScreen(
                     if (feedback != null && feedback.recomendaciones.isNotEmpty()) {
                         item {
                             SectionHeader(
-                                title = "Recomendaciones",
+                                title = stringResource(R.string.section_recommendations),
                                 color = BluePrimary
                             )
                         }

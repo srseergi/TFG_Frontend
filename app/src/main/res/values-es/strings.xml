@@ -1,0 +1,78 @@
+<resources>
+    <string name="app_name">TFG App</string>
+
+    <!-- Common -->
+    <string name="error">Error</string>
+    <string name="accept">Aceptar</string>
+    <string name="retry">Reintentar</string>
+    <string name="unknown_error">Error desconocido</string>
+    <string name="back">Volver</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">TFG App</string>
+    <string name="username">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="login_button">Iniciar sesión</string>
+    <string name="no_account_register">¿No tienes cuenta? Regístrate</string>
+    <string name="fill_all_fields">Completa todos los campos</string>
+
+    <!-- Register Screen -->
+    <string name="register_title">Registro</string>
+    <string name="email">Email</string>
+    <string name="register_button">Registrarse</string>
+    <string name="invalid_email">Email no válido</string>
+    <string name="password_min_length">La contraseña debe tener al menos 8 caracteres</string>
+
+    <!-- Home Screen -->
+    <string name="home_title">Subir CV</string>
+    <string name="uploading_cv">Subiendo CV…</string>
+    <string name="cv_title_label">Título del CV</string>
+    <string name="cv_title_placeholder">Ej: CV Principal</string>
+    <string name="desired_position_label">Posición deseada</string>
+    <string name="desired_position_placeholder">Ej: Android Developer</string>
+    <string name="select_pdf_file">Seleccionar archivo PDF</string>
+    <string name="improve_cv_button">Mejorar CV</string>
+    <string name="improving_cv">Mejorando tu CV</string>
+    <string name="polling_info_message">Este proceso puede tardar varios minutos.\nPuedes navegar a otras pantallas mientras esperas.</string>
+    <string name="improved_cv_not_found">CV mejorado no encontrado</string>
+    <string name="process_failed">El proceso ha fallado</string>
+    <string name="title_required">El título es obligatorio</string>
+    <string name="position_required">La posición es obligatoria</string>
+    <string name="select_pdf_error">Selecciona un archivo PDF</string>
+    <string name="starting_process">Iniciando proceso…</string>
+    <string name="upload_cv_error">Error al subir el CV</string>
+    <string name="reconnecting">Reconectando…</string>
+
+    <!-- Gallery Screen -->
+    <string name="gallery_title">Mis CVs</string>
+    <string name="no_cvs_message">No tienes CVs mejorados todavía.\nSube tu primer CV desde Inicio.</string>
+    <string name="error_loading_cvs">Error al cargar los CVs</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_title">Perfil</string>
+    <string name="logout_button">Cerrar sesión</string>
+    <string name="language_label">Idioma</string>
+
+    <!-- CV Detail Screen -->
+    <string name="cv_detail_title">Detalle CV</string>
+    <string name="downloading">Descargando…</string>
+    <string name="view_improved_pdf">Ver PDF mejorado</string>
+    <string name="section_meets">Cumple</string>
+    <string name="section_does_not_meet">No Cumple</string>
+    <string name="section_recommendations">Recomendaciones</string>
+    <string name="pdf_url_not_available">URL del PDF no disponible</string>
+    <string name="pdf_download_error">Error al descargar el PDF</string>
+    <string name="open_pdf_with">Abrir PDF con…</string>
+    <string name="no_pdf_app_found">No se encontró una app para abrir PDFs</string>
+    <string name="error_loading_cv">Error al cargar el CV</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_gallery">Galería</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Languages -->
+    <string name="language_english">Inglés</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_catalan">Catalán</string>
+</resources>

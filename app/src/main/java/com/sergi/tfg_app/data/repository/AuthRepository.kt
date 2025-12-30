@@ -76,4 +76,10 @@ class AuthRepository(
     fun getUsername(): Flow<String?> = dataStore.getUsername()
 
     fun getEmail(): Flow<String?> = dataStore.getEmail()
+
+    fun getLanguage(): Flow<String?> = dataStore.getLanguage()
+
+    suspend fun saveLanguage(languageCode: String) {
+        dataStore.saveLanguage(languageCode)
+    }
 }

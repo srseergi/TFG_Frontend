@@ -20,6 +20,7 @@ class TokenDataStore(private val context: Context) {
         private val USERNAME = stringPreferencesKey("username")
         private val EMAIL = stringPreferencesKey("email")
         private val SCRAPER_ID = stringPreferencesKey("scraper_id")
+        private val LANGUAGE = stringPreferencesKey("language")
     }
 
     suspend fun saveTokens(access: String, refresh: String) {
@@ -75,6 +76,16 @@ class TokenDataStore(private val context: Context) {
         context.dataStore.edit { prefs ->
             prefs.remove(SCRAPER_ID)
         }
+    }
+
+    suspend fun saveLanguage(languageCode: String) {
+        context.dataStore.edit { prefs ->
+            prefs[LANGUAGE] = languageCode
+        }
+    }
+
+    fun getLanguage(): Flow<String?> = context.dataStore.data.map { prefs ->
+        prefs[LANGUAGE]
     }
 
     suspend fun clear() {

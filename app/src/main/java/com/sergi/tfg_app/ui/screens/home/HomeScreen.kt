@@ -9,8 +9,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.sergi.tfg_app.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,11 +53,11 @@ fun HomeScreen(
     if (homeState is HomeState.Error) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissError() },
-            title = { Text("Error") },
+            title = { Text(stringResource(R.string.error)) },
             text = { Text((homeState as HomeState.Error).message) },
             confirmButton = {
                 TextButton(onClick = { viewModel.dismissError() }) {
-                    Text("Aceptar")
+                    Text(stringResource(R.string.accept))
                 }
             }
         )
@@ -64,7 +66,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Subir CV") }
+                title = { Text(stringResource(R.string.home_title)) }
             )
         }
     ) { paddingValues ->
@@ -103,7 +105,7 @@ fun HomeScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             CircularProgressIndicator()
                             Spacer(modifier = Modifier.height(16.dp))
-                            Text("Subiendo CV...")
+                            Text(stringResource(R.string.uploading_cv))
                         }
                     }
                 }
@@ -138,8 +140,8 @@ private fun UploadForm(
     OutlinedTextField(
         value = title,
         onValueChange = onTitleChange,
-        label = { Text("Título del CV") },
-        placeholder = { Text("Ej: CV Principal") },
+        label = { Text(stringResource(R.string.cv_title_label)) },
+        placeholder = { Text(stringResource(R.string.cv_title_placeholder)) },
         singleLine = true,
         enabled = isEnabled,
         modifier = Modifier.fillMaxWidth()
@@ -150,8 +152,8 @@ private fun UploadForm(
     OutlinedTextField(
         value = position,
         onValueChange = onPositionChange,
-        label = { Text("Posición deseada") },
-        placeholder = { Text("Ej: Android Developer") },
+        label = { Text(stringResource(R.string.desired_position_label)) },
+        placeholder = { Text(stringResource(R.string.desired_position_placeholder)) },
         singleLine = true,
         enabled = isEnabled,
         modifier = Modifier.fillMaxWidth()
@@ -164,7 +166,7 @@ private fun UploadForm(
         enabled = isEnabled,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(selectedFileName ?: "Seleccionar archivo PDF")
+        Text(selectedFileName ?: stringResource(R.string.select_pdf_file))
     }
 
     Spacer(modifier = Modifier.height(24.dp))
@@ -174,7 +176,7 @@ private fun UploadForm(
         enabled = isEnabled && selectedFileName != null,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text("Mejorar CV")
+        Text(stringResource(R.string.improve_cv_button))
     }
 }
 
@@ -189,7 +191,7 @@ private fun PollingView(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Mejorando tu CV",
+            text = stringResource(R.string.improving_cv),
             style = MaterialTheme.typography.headlineSmall
         )
 
@@ -222,7 +224,7 @@ private fun PollingView(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "Este proceso puede tardar varios minutos.\nPuedes navegar a otras pantallas mientras esperas.",
+            text = stringResource(R.string.polling_info_message),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center

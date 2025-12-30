@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.sergi.tfg_app.R
+import com.sergi.tfg_app.util.AppLanguage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -18,11 +20,14 @@ fun ProfileScreen(
     onLogoutClick: () -> Unit
 ) {
     val profileState by viewModel.profileState.collectAsState()
+    val context = LocalContext.current
+
+    var languageDropdownExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Perfil") }
+                title = { Text(stringResource(R.string.profile_title)) }
             )
         }
     ) { paddingValues ->
@@ -64,7 +69,7 @@ fun ProfileScreen(
                         modifier = Modifier.padding(16.dp)
                     ) {
                         Text(
-                            text = "Usuario",
+                            text = stringResource(R.string.username),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -76,7 +81,7 @@ fun ProfileScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = "Email",
+                            text = stringResource(R.string.email),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -84,6 +89,60 @@ fun ProfileScreen(
                             text = profileState.email,
                             style = MaterialTheme.typography.bodyLarge
                         )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Language selector
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.language_label),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        ExposedDropdownMenuBox(
+                            expanded = languageDropdownExpanded,
+                            onExpandedChange = { languageDropdownExpanded = it }
+                        ) {
+                            OutlinedTextField(
+                                value = getLanguageDisplayName(profileState.selectedLanguage),
+                                onValueChange = {},
+                                readOnly = true,
+                                trailingIcon = {
+                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = languageDropdownExpanded)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .menuAnchor()
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = languageDropdownExpanded,
+                                onDismissRequest = { languageDropdownExpanded = false }
+                            ) {
+                                AppLanguage.entries.forEach { language ->
+                                    DropdownMenuItem(
+                                        text = { Text(getLanguageDisplayName(language)) },
+                                        onClick = {
+                                            viewModel.changeLanguage(context, language)
+                                            languageDropdownExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -99,9 +158,18 @@ fun ProfileScreen(
                         containerColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Text("Cerrar sesión")
+                    Text(stringResource(R.string.logout_button))
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun getLanguageDisplayName(language: AppLanguage): String {
+    return when (language) {
+        AppLanguage.ENGLISH -> stringResource(R.string.language_english)
+        AppLanguage.SPANISH -> stringResource(R.string.language_spanish)
+        AppLanguage.CATALAN -> stringResource(R.string.language_catalan)
     }
 }
