@@ -7,25 +7,31 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sergi.tfg_app.data.remote.dto.CvListItem
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GalleryScreen(
+    viewModel: GalleryViewModel,
     onCvClick: (String) -> Unit
 ) {
-    // Datos placeholder - se reemplazará con datos reales en el futuro
-    val cvList = listOf(
-        "CV Android Dev",
-        "CV Backend",
-        "CV Full Stack",
-        "CV Data Science",
-        "CV DevOps",
-        "CV Frontend"
-    )
+    val state by viewModel.state.collectAsState()
+
+    // Recargar la lista cada vez que se muestra la pantalla
+    LaunchedEffect(Unit) {
+        viewModel.loadCvList()
+    }
 
     Scaffold(
         topBar = {
@@ -34,35 +40,71 @@ fun GalleryScreen(
             )
         }
     ) { paddingValues ->
-        if (cvList.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "No tienes CVs mejorados todavía.\nSube tu primer CV desde Inicio.",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
+        when {
+            state.isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                items(cvList) { cvTitle ->
-                    CvGridItem(
-                        title = cvTitle,
-                        onClick = { onCvClick(cvTitle) }
+
+            state.error != null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = state.error ?: "Error desconocido",
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = { viewModel.retry() }) {
+                            Text("Reintentar")
+                        }
+                    }
+                }
+            }
+
+            state.cvList.isEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "No tienes CVs mejorados todavía.\nSube tu primer CV desde Inicio.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     )
+                }
+            }
+
+            else -> {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    items(state.cvList) { cv ->
+                        CvGridItem(
+                            cv = cv,
+                            onClick = { onCvClick(cv.id) }
+                        )
+                    }
                 }
             }
         }
@@ -70,8 +112,8 @@ fun GalleryScreen(
 }
 
 @Composable
-private fun CvGridItem(
-    title: String,
+fun CvGridItem(
+    cv: CvListItem,
     onClick: () -> Unit
 ) {
     Card(
@@ -83,16 +125,38 @@ private fun CvGridItem(
             containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = title,
+                text = cv.title,
                 style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = formatDate(cv.createdAt),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+private fun formatDate(isoDate: String): String {
+    return try {
+        val inputFormatter = DateTimeFormatter.ISO_DATE_TIME
+        val outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yy")
+        val dateTime = LocalDateTime.parse(isoDate, inputFormatter)
+        dateTime.format(outputFormatter)
+    } catch (e: Exception) {
+        isoDate.take(10)
     }
 }

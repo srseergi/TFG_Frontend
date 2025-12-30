@@ -1,6 +1,7 @@
 package com.sergi.tfg_app.data.remote.api
 
 import com.sergi.tfg_app.data.remote.dto.CreateCvResponse
+import com.sergi.tfg_app.data.remote.dto.CvListItem
 import com.sergi.tfg_app.data.remote.dto.ImprovedCvResponse
 import com.sergi.tfg_app.data.remote.dto.ScraperStatusResponse
 import okhttp3.MultipartBody
@@ -31,4 +32,7 @@ interface CvApi {
     suspend fun getImprovedCv(
         @Path("cvId") cvId: String
     ): Response<ImprovedCvResponse>
+
+    @GET("cvs/improved/")
+    suspend fun listImprovedCvs(): Response<List<CvListItem>>
 }
