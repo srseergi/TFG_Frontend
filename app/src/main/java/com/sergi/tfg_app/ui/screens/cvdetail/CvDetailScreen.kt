@@ -30,7 +30,7 @@ fun CvDetailScreen(
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
-    // Dialog de error de descarga
+    // Dialog de error de descarga (improved CV)
     if (state.downloadState is DownloadState.Error) {
         AlertDialog(
             onDismissRequest = { viewModel.resetDownloadState() },
@@ -38,6 +38,20 @@ fun CvDetailScreen(
             text = { Text((state.downloadState as DownloadState.Error).message) },
             confirmButton = {
                 TextButton(onClick = { viewModel.resetDownloadState() }) {
+                    Text(stringResource(R.string.accept))
+                }
+            }
+        )
+    }
+
+    // Dialog de error de descarga (original CV)
+    if (state.originalDownloadState is DownloadState.Error) {
+        AlertDialog(
+            onDismissRequest = { viewModel.resetOriginalDownloadState() },
+            title = { Text(stringResource(R.string.error)) },
+            text = { Text((state.originalDownloadState as DownloadState.Error).message) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.resetOriginalDownloadState() }) {
                     Text(stringResource(R.string.accept))
                 }
             }
@@ -100,53 +114,41 @@ fun CvDetailScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Información del CV con botón de descarga
+                    // Información del CV mejorado con botón de descarga
                     item {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = GrayLight
-                            )
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
-                            ) {
-                                Text(
-                                    text = state.title,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Posición: ${state.position}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
+                        CvCard(
+                            title = state.title,
+                            position = state.position,
+                            buttonText = if (state.downloadState is DownloadState.Downloading) {
+                                stringResource(R.string.downloading)
+                            } else {
+                                stringResource(R.string.view_improved_pdf)
+                            },
+                            isDownloading = state.downloadState is DownloadState.Downloading,
+                            onDownloadClick = { viewModel.downloadAndOpenPdf(context) }
+                        )
+                    }
 
-                                // Botón de descarga
-                                Button(
-                                    onClick = { viewModel.downloadAndOpenPdf(context) },
-                                    enabled = state.downloadState !is DownloadState.Downloading,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    if (state.downloadState is DownloadState.Downloading) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(20.dp),
-                                            color = MaterialTheme.colorScheme.onPrimary,
-                                            strokeWidth = 2.dp
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(stringResource(R.string.downloading))
-                                    } else {
-                                        Text(stringResource(R.string.view_improved_pdf))
-                                    }
-                                }
-                            }
-                        }
+                    // Seccion: CV Original (justo debajo del CV mejorado)
+                    item {
+                        SectionHeader(
+                            title = stringResource(R.string.original_cv_title),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    item {
+                        CvCard(
+                            title = state.originalTitle,
+                            position = state.originalPosition,
+                            buttonText = if (state.originalDownloadState is DownloadState.Downloading) {
+                                stringResource(R.string.downloading)
+                            } else {
+                                stringResource(R.string.view_original_pdf)
+                            },
+                            isDownloading = state.originalDownloadState is DownloadState.Downloading,
+                            onDownloadClick = { viewModel.downloadAndOpenOriginalPdf(context) }
+                        )
                     }
 
                     // Seccion: Cumple
@@ -193,6 +195,57 @@ fun CvDetailScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CvCard(
+    title: String,
+    position: String,
+    buttonText: String,
+    isDownloading: Boolean,
+    onDownloadClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = GrayLight
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.position_label, position),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onDownloadClick,
+                enabled = !isDownloading,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (isDownloading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+                Text(buttonText)
             }
         }
     }

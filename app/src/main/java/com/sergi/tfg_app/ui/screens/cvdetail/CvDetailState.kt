@@ -9,7 +9,12 @@ data class CvDetailState(
     val pdfFileUrl: String = "",
     val feedback: CvFeedback? = null,
     val error: String? = null,
-    val downloadState: DownloadState = DownloadState.Idle
+    val downloadState: DownloadState = DownloadState.Idle,
+    // Original CV data
+    val originalTitle: String = "",
+    val originalPosition: String = "",
+    val originalPdfFileUrl: String = "",
+    val originalDownloadState: DownloadState = DownloadState.Idle
 )
 
 sealed class DownloadState {
