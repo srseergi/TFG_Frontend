@@ -5,6 +5,7 @@ import android.net.Uri
 import com.sergi.tfg_app.data.local.TokenDataStore
 import com.sergi.tfg_app.data.remote.api.CvApi
 import com.sergi.tfg_app.data.remote.dto.CreateCvResponse
+import com.sergi.tfg_app.data.remote.dto.CvListItem
 import com.sergi.tfg_app.data.remote.dto.ImprovedCvResponse
 import com.sergi.tfg_app.data.remote.dto.ScraperStatusResponse
 import kotlinx.coroutines.flow.first
@@ -108,6 +109,26 @@ class CvRepository(
 
     suspend fun clearScraperId() {
         dataStore.clearScraperId()
+    }
+
+    suspend fun listCvs(): Result<List<CvListItem>> {
+        return try {
+            val response = api.listImprovedCvs()
+
+            if (response.isSuccessful) {
+                val body = response.body()
+                    ?: return Result.failure(Exception("Respuesta vacía del servidor"))
+                Result.success(body)
+            } else {
+                val errorMessage = when (response.code()) {
+                    401 -> "Sesión expirada"
+                    else -> "Error al obtener la lista: ${response.code()}"
+                }
+                Result.failure(Exception(errorMessage))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Error de conexión: ${e.message}"))
+        }
     }
 
     private fun uriToFile(uri: Uri): File? {

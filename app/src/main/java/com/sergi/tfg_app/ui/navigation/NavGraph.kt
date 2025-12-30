@@ -23,6 +23,7 @@ import com.sergi.tfg_app.ui.components.BottomNavBar
 import com.sergi.tfg_app.ui.screens.cvdetail.CvDetailScreen
 import com.sergi.tfg_app.ui.screens.cvdetail.CvDetailViewModel
 import com.sergi.tfg_app.ui.screens.gallery.GalleryScreen
+import com.sergi.tfg_app.ui.screens.gallery.GalleryViewModel
 import com.sergi.tfg_app.ui.screens.home.HomeScreen
 import com.sergi.tfg_app.ui.screens.home.HomeViewModel
 import com.sergi.tfg_app.ui.screens.login.LoginScreen
@@ -54,6 +55,7 @@ fun NavGraph(navController: NavHostController) {
     val registerViewModel = remember { RegisterViewModel(authRepository) }
     val profileViewModel = remember { ProfileViewModel(authRepository) }
     val homeViewModel = remember { HomeViewModel(cvRepository) }
+    val galleryViewModel = remember { GalleryViewModel(cvRepository) }
 
     // Verificar si hay sesión guardada
     val isLoggedIn by authRepository.isLoggedIn().collectAsState(initial = false)
@@ -144,6 +146,7 @@ fun NavGraph(navController: NavHostController) {
 
             composable(Routes.Gallery.route) {
                 GalleryScreen(
+                    viewModel = galleryViewModel,
                     onCvClick = { cvId ->
                         navController.navigate(Routes.CvDetail.createRoute(cvId))
                     }
