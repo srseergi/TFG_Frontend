@@ -12,10 +12,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.sergi.tfg_app.R
 import com.sergi.tfg_app.data.remote.dto.CvListItem
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -36,7 +38,7 @@ fun GalleryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mis CVs") }
+                title = { Text(stringResource(R.string.gallery_title)) }
             )
         }
     ) { paddingValues ->
@@ -61,13 +63,13 @@ fun GalleryScreen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = state.error ?: "Error desconocido",
+                            text = state.error ?: stringResource(R.string.unknown_error),
                             color = MaterialTheme.colorScheme.error,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = { viewModel.retry() }) {
-                            Text("Reintentar")
+                            Text(stringResource(R.string.retry))
                         }
                     }
                 }
@@ -81,7 +83,7 @@ fun GalleryScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No tienes CVs mejorados todavía.\nSube tu primer CV desde Inicio.",
+                        text = stringResource(R.string.no_cvs_message),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center

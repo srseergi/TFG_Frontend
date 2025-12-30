@@ -1,5 +1,6 @@
 package com.sergi.tfg_app.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.outlined.List
@@ -13,30 +14,32 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.sergi.tfg_app.R
 
 sealed class BottomNavItem(
     val route: String,
-    val label: String,
+    @StringRes val labelResId: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
     object Home : BottomNavItem(
         route = "home",
-        label = "Inicio",
+        labelResId = R.string.nav_home,
         selectedIcon = Icons.Filled.Home,
         unselectedIcon = Icons.Outlined.Home
     )
 
     object Gallery : BottomNavItem(
         route = "gallery",
-        label = "Galería",
+        labelResId = R.string.nav_gallery,
         selectedIcon = Icons.AutoMirrored.Filled.List,
         unselectedIcon = Icons.AutoMirrored.Outlined.List
     )
 
     object Profile : BottomNavItem(
         route = "profile",
-        label = "Perfil",
+        labelResId = R.string.nav_profile,
         selectedIcon = Icons.Filled.Person,
         unselectedIcon = Icons.Outlined.Person
     )
@@ -56,15 +59,16 @@ fun BottomNavBar(
     NavigationBar {
         items.forEach { item ->
             val isSelected = currentRoute == item.route
+            val label = stringResource(item.labelResId)
 
             NavigationBarItem(
                 icon = {
                     Icon(
                         imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
-                        contentDescription = item.label
+                        contentDescription = label
                     )
                 },
-                label = { Text(item.label) },
+                label = { Text(label) },
                 selected = isSelected,
                 onClick = { onNavigate(item.route) }
             )
