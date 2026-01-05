@@ -30,7 +30,6 @@ fun GalleryScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
-    // Recargar la lista cada vez que se muestra la pantalla
     LaunchedEffect(Unit) {
         viewModel.loadCvList()
     }

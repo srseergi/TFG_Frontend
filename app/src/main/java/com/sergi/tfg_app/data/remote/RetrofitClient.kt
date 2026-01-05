@@ -22,7 +22,6 @@ object RetrofitClient {
         level = HttpLoggingInterceptor.Level.HEADERS
     }
 
-    // Cliente sin autenticación (para login y register)
     private val publicOkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .connectTimeout(10, TimeUnit.SECONDS)
@@ -38,7 +37,6 @@ object RetrofitClient {
 
     val authApi: AuthApi = publicRetrofit.create(AuthApi::class.java)
 
-    // Cliente con autenticación (para endpoints protegidos)
     fun createAuthenticatedCvApi(tokenProvider: () -> String?): CvApi {
         val authInterceptor = AuthInterceptor(tokenProvider)
 

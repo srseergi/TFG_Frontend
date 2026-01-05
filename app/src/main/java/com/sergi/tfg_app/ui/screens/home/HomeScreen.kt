@@ -40,7 +40,6 @@ fun HomeScreen(
         }
     }
 
-    // Navegar cuando el CV está listo
     LaunchedEffect(homeState) {
         if (homeState is HomeState.Success) {
             val cvId = (homeState as HomeState.Success).improvedCvId
@@ -49,7 +48,6 @@ fun HomeScreen(
         }
     }
 
-    // Dialog de error
     if (homeState is HomeState.Error) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissError() },
@@ -79,7 +77,6 @@ fun HomeScreen(
         ) {
             when (val state = homeState) {
                 is HomeState.Idle, is HomeState.Error -> {
-                    // Formulario de subida
                     UploadForm(
                         title = title,
                         onTitleChange = { title = it },
@@ -97,7 +94,6 @@ fun HomeScreen(
                 }
 
                 is HomeState.Uploading -> {
-                    // Indicador de carga mientras sube
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -111,16 +107,13 @@ fun HomeScreen(
                 }
 
                 is HomeState.Polling -> {
-                    // Vista de polling con progreso
                     PollingView(
                         percentage = state.percentage,
                         message = state.message
                     )
                 }
 
-                is HomeState.Success -> {
-                    // Este estado se maneja en LaunchedEffect arriba
-                }
+                is HomeState.Success -> { }
             }
         }
     }

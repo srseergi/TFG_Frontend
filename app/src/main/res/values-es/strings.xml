@@ -15,6 +15,10 @@
     <string name="login_button">Iniciar sesión</string>
     <string name="no_account_register">¿No tienes cuenta? Regístrate</string>
     <string name="fill_all_fields">Completa todos los campos</string>
+    <string name="sign_in_with_google">Iniciar sesión con Google</string>
+    <string name="google_sign_in_error">Error de inicio de sesión con Google</string>
+    <string name="google_sign_in_cancelled">Inicio de sesión con Google cancelado</string>
+    <string name="or_divider">o</string>
 
     <!-- Register Screen -->
     <string name="register_title">Registro</string>

@@ -2,6 +2,7 @@ package com.sergi.tfg_app.data.repository
 
 import com.sergi.tfg_app.data.local.TokenDataStore
 import com.sergi.tfg_app.data.remote.api.AuthApi
+import com.sergi.tfg_app.data.remote.dto.GoogleLoginRequest
 import com.sergi.tfg_app.data.remote.dto.LoginRequest
 import com.sergi.tfg_app.data.remote.dto.RegisterRequest
 import com.sergi.tfg_app.data.remote.dto.User
@@ -13,25 +14,47 @@ class AuthRepository(
     private val dataStore: TokenDataStore
 ) {
 
+    suspend fun loginWithGoogle(idToken: String): Result<User> {
+        return try {
+            val response = api.googleLogin(GoogleLoginRequest(idToken))
+
+            if (response.isSuccessful) {
+                val body = response.body()
+                    ?: return Result.failure(Exception("Empty response from server"))
+                dataStore.saveTokens(body.tokens.access, body.tokens.refresh)
+                dataStore.saveUser(body.user.id, body.user.username, body.user.email)
+                Result.success(body.user)
+            } else {
+                val errorMessage = when (response.code()) {
+                    401 -> "Invalid Google token"
+                    else -> "Google authentication error"
+                }
+                Result.failure(Exception(errorMessage))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Connection error: ${e.message}"))
+        }
+    }
+
     suspend fun login(username: String, password: String): Result<User> {
         return try {
             val response = api.login(LoginRequest(username, password))
 
             if (response.isSuccessful) {
                 val body = response.body()
-                    ?: return Result.failure(Exception("Respuesta vacía del servidor"))
+                    ?: return Result.failure(Exception("Empty response from server"))
                 dataStore.saveTokens(body.tokens.access, body.tokens.refresh)
                 dataStore.saveUser(body.user.id, body.user.username, body.user.email)
                 Result.success(body.user)
             } else {
                 val errorMessage = when (response.code()) {
-                    401 -> "Usuario o contraseña incorrectos"
-                    else -> "Error de autenticación"
+                    401 -> "Invalid username or password"
+                    else -> "Authentication error"
                 }
                 Result.failure(Exception(errorMessage))
             }
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.message}"))
+            Result.failure(Exception("Connection error: ${e.message}"))
         }
     }
 
@@ -41,19 +64,19 @@ class AuthRepository(
 
             if (response.isSuccessful) {
                 val body = response.body()
-                    ?: return Result.failure(Exception("Respuesta vacía del servidor"))
+                    ?: return Result.failure(Exception("Empty response from server"))
                 dataStore.saveTokens(body.tokens.access, body.tokens.refresh)
                 dataStore.saveUser(body.user.id, body.user.username, body.user.email)
                 Result.success(body.user)
             } else {
                 val errorMessage = when (response.code()) {
-                    400 -> "El usuario o email ya existe"
-                    else -> "Error en el registro"
+                    400 -> "Username or email already exists"
+                    else -> "Registration error"
                 }
                 Result.failure(Exception(errorMessage))
             }
         } catch (e: Exception) {
-            Result.failure(Exception("Error de conexión: ${e.message}"))
+            Result.failure(Exception("Connection error: ${e.message}"))
         }
     }
 

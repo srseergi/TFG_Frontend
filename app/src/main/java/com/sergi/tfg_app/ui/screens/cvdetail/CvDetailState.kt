@@ -10,7 +10,6 @@ data class CvDetailState(
     val feedback: CvFeedback? = null,
     val error: String? = null,
     val downloadState: DownloadState = DownloadState.Idle,
-    // Original CV data
     val originalTitle: String = "",
     val originalPosition: String = "",
     val originalPdfFileUrl: String = "",

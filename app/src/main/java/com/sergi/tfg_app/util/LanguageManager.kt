@@ -25,7 +25,6 @@ object LanguageManager {
             context.getSystemService(LocaleManager::class.java)
                 .applicationLocales = LocaleList(Locale.forLanguageTag(language.code))
         }
-        // For older versions, the app will restart with the new locale from DataStore
     }
 
     fun getCurrentLanguage(context: Context): AppLanguage {

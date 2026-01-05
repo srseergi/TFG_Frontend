@@ -41,26 +41,21 @@ fun NavGraph(navController: NavHostController) {
     val dataStore = remember { TokenDataStore(context) }
     val authRepository = remember { AuthRepository(RetrofitClient.authApi, dataStore) }
 
-    // Token provider para el AuthInterceptor
     val tokenProvider: () -> String? = {
         runBlocking { dataStore.getAccessToken().first() }
     }
 
-    // Crear CvApi autenticada y CvRepository
     val cvApi = remember { RetrofitClient.createAuthenticatedCvApi(tokenProvider) }
     val cvRepository = remember { CvRepository(cvApi, dataStore, context) }
 
-    // Crear ViewModels
     val loginViewModel = remember { LoginViewModel(authRepository) }
     val registerViewModel = remember { RegisterViewModel(authRepository) }
     val profileViewModel = remember { ProfileViewModel(authRepository) }
     val homeViewModel = remember { HomeViewModel(cvRepository) }
     val galleryViewModel = remember { GalleryViewModel(cvRepository) }
 
-    // Verificar si hay sesión guardada
     val isLoggedIn by authRepository.isLoggedIn().collectAsState(initial = false)
 
-    // Redirigir a Home si ya hay sesión
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn && navController.currentDestination?.route == Routes.Login.route) {
             navController.navigate(Routes.Home.route) {
@@ -69,11 +64,9 @@ fun NavGraph(navController: NavHostController) {
         }
     }
 
-    // Determinar ruta actual para BottomNavBar
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Rutas que muestran el BottomNavBar
     val bottomNavRoutes = listOf(
         Routes.Home.route,
         Routes.Gallery.route,
@@ -89,7 +82,6 @@ fun NavGraph(navController: NavHostController) {
                     onNavigate = { route ->
                         if (route != currentRoute) {
                             navController.navigate(route) {
-                                // Evitar múltiples copias de la misma pantalla en el back stack
                                 popUpTo(Routes.Home.route) {
                                     saveState = true
                                 }
