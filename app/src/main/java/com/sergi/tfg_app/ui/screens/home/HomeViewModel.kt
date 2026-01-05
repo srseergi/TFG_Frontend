@@ -38,7 +38,6 @@ class HomeViewModel(
         viewModelScope.launch {
             val activeScraperId = cvRepository.getActiveScraperId()
             if (activeScraperId != null) {
-                // Hay un proceso activo, consultar su estado
                 checkAndResumePolling(activeScraperId)
             }
         }
@@ -49,7 +48,6 @@ class HomeViewModel(
             .onSuccess { status ->
                 when (status.status) {
                     STATUS_SUCCESS -> {
-                        // Ya terminó, navegar al resultado
                         val improvedCvId = status.improvedCvId
                         if (improvedCvId != null) {
                             cvRepository.clearScraperId()
@@ -66,7 +64,6 @@ class HomeViewModel(
                         )
                     }
                     STATUS_PENDING, STATUS_PROCESSING -> {
-                        // Continuar polling
                         _homeState.value = HomeState.Polling(
                             percentage = status.progressPercentage,
                             message = status.progressMessage
@@ -154,8 +151,7 @@ class HomeViewModel(
                             }
                         }
                     }
-                    .onFailure { error ->
-                        // Error de red, continuar intentando
+                    .onFailure {
                         _homeState.value = HomeState.Polling(
                             percentage = (_homeState.value as? HomeState.Polling)?.percentage ?: 0,
                             message = "Reconectando..."

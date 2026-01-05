@@ -34,6 +34,24 @@ class LoginViewModel(
         }
     }
 
+    fun loginWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _loginState.value = AuthState.Loading
+
+            repository.loginWithGoogle(idToken)
+                .onSuccess { user ->
+                    _loginState.value = AuthState.Success(user)
+                }
+                .onFailure { error ->
+                    _loginState.value = AuthState.Error(error.message ?: "Error desconocido")
+                }
+        }
+    }
+
+    fun setError(message: String) {
+        _loginState.value = AuthState.Error(message)
+    }
+
     fun resetState() {
         _loginState.value = AuthState.Idle
     }

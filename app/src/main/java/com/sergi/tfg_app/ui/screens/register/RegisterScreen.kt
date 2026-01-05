@@ -18,7 +18,6 @@ import com.sergi.tfg_app.R
 import com.sergi.tfg_app.ui.components.ErrorMessage
 import com.sergi.tfg_app.ui.components.LanguagePickerDialog
 import com.sergi.tfg_app.ui.screens.auth.AuthState
-import com.sergi.tfg_app.util.AppLanguage
 import com.sergi.tfg_app.util.LanguageManager
 import kotlinx.coroutines.launch
 
@@ -41,7 +40,6 @@ fun RegisterScreen(
 
     var currentLanguage by remember { mutableStateOf(LanguageManager.getCurrentLanguage(context)) }
 
-    // Navegar cuando el registro es exitoso
     LaunchedEffect(registerState) {
         if (registerState is AuthState.Success) {
             onRegisterSuccess()
@@ -49,7 +47,6 @@ fun RegisterScreen(
         }
     }
 
-    // Language picker dialog
     if (showLanguageDialog) {
         LanguagePickerDialog(
             currentLanguage = currentLanguage,
@@ -128,7 +125,6 @@ fun RegisterScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                // Mostrar error si existe
                 if (registerState is AuthState.Error) {
                     ErrorMessage(message = (registerState as AuthState.Error).message)
                 }
@@ -152,7 +148,6 @@ fun RegisterScreen(
                 }
             }
 
-            // Settings button in bottom right
             IconButton(
                 onClick = { showLanguageDialog = true },
                 modifier = Modifier

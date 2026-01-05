@@ -30,7 +30,6 @@ fun CvDetailScreen(
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
 
-    // Dialog de error de descarga (improved CV)
     if (state.downloadState is DownloadState.Error) {
         AlertDialog(
             onDismissRequest = { viewModel.resetDownloadState() },
@@ -44,7 +43,6 @@ fun CvDetailScreen(
         )
     }
 
-    // Dialog de error de descarga (original CV)
     if (state.originalDownloadState is DownloadState.Error) {
         AlertDialog(
             onDismissRequest = { viewModel.resetOriginalDownloadState() },
@@ -114,7 +112,6 @@ fun CvDetailScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Información del CV mejorado con botón de descarga
                     item {
                         CvCard(
                             title = state.title,
@@ -129,7 +126,6 @@ fun CvDetailScreen(
                         )
                     }
 
-                    // Seccion: CV Original (justo debajo del CV mejorado)
                     item {
                         SectionHeader(
                             title = stringResource(R.string.original_cv_title),
@@ -151,7 +147,6 @@ fun CvDetailScreen(
                         )
                     }
 
-                    // Seccion: Cumple
                     if (feedback != null && feedback.cumple.isNotEmpty()) {
                         item {
                             SectionHeader(
@@ -164,7 +159,6 @@ fun CvDetailScreen(
                         }
                     }
 
-                    // Seccion: No Cumple
                     if (feedback != null && feedback.noCumple.isNotEmpty()) {
                         item {
                             SectionHeader(
@@ -177,7 +171,6 @@ fun CvDetailScreen(
                         }
                     }
 
-                    // Seccion: Recomendaciones
                     if (feedback != null && feedback.recomendaciones.isNotEmpty()) {
                         item {
                             SectionHeader(
@@ -190,7 +183,6 @@ fun CvDetailScreen(
                         }
                     }
 
-                    // Espacio al final
                     item {
                         Spacer(modifier = Modifier.height(16.dp))
                     }

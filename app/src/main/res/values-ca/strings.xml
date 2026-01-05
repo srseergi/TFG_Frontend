@@ -15,6 +15,10 @@
     <string name="login_button">Iniciar sessió</string>
     <string name="no_account_register">No tens compte? Registra\'t</string>
     <string name="fill_all_fields">Omple tots els camps</string>
+    <string name="sign_in_with_google">Iniciar sessió amb Google</string>
+    <string name="google_sign_in_error">Error d\'inici de sessió amb Google</string>
+    <string name="google_sign_in_cancelled">Inici de sessió amb Google cancel·lat</string>
+    <string name="or_divider">o</string>
 
     <!-- Register Screen -->
     <string name="register_title">Registre</string>

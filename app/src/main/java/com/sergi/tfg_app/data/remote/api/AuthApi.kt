@@ -1,5 +1,6 @@
 package com.sergi.tfg_app.data.remote.api
 
+import com.sergi.tfg_app.data.remote.dto.GoogleLoginRequest
 import com.sergi.tfg_app.data.remote.dto.LoginRequest
 import com.sergi.tfg_app.data.remote.dto.LoginResponse
 import com.sergi.tfg_app.data.remote.dto.RegisterRequest
@@ -15,4 +16,7 @@ interface AuthApi {
 
     @POST("users/register/")
     suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
+
+    @POST("users/google-login/")
+    suspend fun googleLogin(@Body request: GoogleLoginRequest): Response<LoginResponse>
 }

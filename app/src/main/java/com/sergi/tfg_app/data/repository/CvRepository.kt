@@ -43,7 +43,6 @@ class CvRepository(
                 val body = response.body()
                     ?: return Result.failure(Exception("Respuesta vacía del servidor"))
 
-                // Guardar el scraperId para poder reanudar si se cierra la app
                 dataStore.saveScraperId(body.scraper.scraperId)
 
                 Result.success(body)

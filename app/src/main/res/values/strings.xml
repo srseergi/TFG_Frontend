@@ -15,6 +15,10 @@
     <string name="login_button">Log in</string>
     <string name="no_account_register">Don\'t have an account? Sign up</string>
     <string name="fill_all_fields">Fill in all fields</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="google_sign_in_error">Google sign-in error</string>
+    <string name="google_sign_in_cancelled">Google sign-in cancelled</string>
+    <string name="or_divider">or</string>
 
     <!-- Register Screen -->
     <string name="register_title">Register</string>
