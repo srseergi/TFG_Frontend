@@ -49,6 +49,7 @@
 
     <!-- Gallery Screen -->
     <string name="gallery_title">Mis CVs</string>
+    <string name="search_hint">Buscar por título</string>
     <string name="no_cvs_message">No tienes CVs mejorados todavía.\nSube tu primer CV desde Inicio.</string>
     <string name="error_loading_cvs">Error al cargar los CVs</string>
 
