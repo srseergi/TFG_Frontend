@@ -6,5 +6,7 @@ data class ProfileState(
     val username: String = "",
     val email: String = "",
     val selectedLanguage: AppLanguage = AppLanguage.ENGLISH,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val isDeleting: Boolean = false,
+    val deleteError: String? = null
 )

@@ -46,11 +46,12 @@ fun NavGraph(navController: NavHostController) {
     }
 
     val cvApi = remember { RetrofitClient.createAuthenticatedCvApi(tokenProvider) }
+    val userApi = remember { RetrofitClient.createAuthenticatedUserApi(tokenProvider) }
     val cvRepository = remember { CvRepository(cvApi, dataStore, context) }
 
     val loginViewModel = remember { LoginViewModel(authRepository) }
     val registerViewModel = remember { RegisterViewModel(authRepository) }
-    val profileViewModel = remember { ProfileViewModel(authRepository) }
+    val profileViewModel = remember { ProfileViewModel(authRepository, userApi) }
     val homeViewModel = remember { HomeViewModel(cvRepository) }
     val galleryViewModel = remember { GalleryViewModel(cvRepository) }
 

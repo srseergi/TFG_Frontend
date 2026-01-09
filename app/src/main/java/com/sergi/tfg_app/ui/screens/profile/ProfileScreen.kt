@@ -20,9 +20,57 @@ fun ProfileScreen(
     onLogoutClick: () -> Unit
 ) {
     val profileState by viewModel.profileState.collectAsState()
+    val deleteSuccess by viewModel.deleteSuccess.collectAsState()
     val context = LocalContext.current
 
     var languageDropdownExpanded by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(deleteSuccess) {
+        if (deleteSuccess) {
+            viewModel.clearDeleteSuccess()
+            onLogoutClick()
+        }
+    }
+
+    if (showDeleteConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            title = { Text(stringResource(R.string.delete_account_title)) },
+            text = { Text(stringResource(R.string.delete_account_confirmation)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteConfirmDialog = false
+                        viewModel.deleteAccount()
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text(stringResource(R.string.delete_account_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteConfirmDialog = false }) {
+                    Text(stringResource(R.string.delete_account_cancel))
+                }
+            }
+        )
+    }
+
+    if (profileState.deleteError != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.clearDeleteError() },
+            title = { Text(stringResource(R.string.error)) },
+            text = { Text(profileState.deleteError ?: "") },
+            confirmButton = {
+                TextButton(onClick = { viewModel.clearDeleteError() }) {
+                    Text(stringResource(R.string.accept))
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -147,17 +195,33 @@ fun ProfileScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Button(
-                    onClick = {
-                        viewModel.logout()
-                        onLogoutClick()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text(stringResource(R.string.logout_button))
+                if (profileState.isDeleting) {
+                    CircularProgressIndicator()
+                } else {
+                    Button(
+                        onClick = {
+                            viewModel.logout()
+                            onLogoutClick()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text(stringResource(R.string.logout_button))
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedButton(
+                        onClick = { showDeleteConfirmDialog = true },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text(stringResource(R.string.delete_account_button))
+                    }
                 }
             }
         }

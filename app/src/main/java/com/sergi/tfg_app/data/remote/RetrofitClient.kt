@@ -2,6 +2,7 @@ package com.sergi.tfg_app.data.remote
 
 import com.sergi.tfg_app.data.remote.api.AuthApi
 import com.sergi.tfg_app.data.remote.api.CvApi
+import com.sergi.tfg_app.data.remote.api.UserApi
 import com.sergi.tfg_app.data.remote.interceptor.AuthInterceptor
 import com.sergi.tfg_app.util.Constants
 import com.squareup.moshi.Moshi
@@ -55,5 +56,25 @@ object RetrofitClient {
             .build()
 
         return authenticatedRetrofit.create(CvApi::class.java)
+    }
+
+    fun createAuthenticatedUserApi(tokenProvider: () -> String?): UserApi {
+        val authInterceptor = AuthInterceptor(tokenProvider)
+
+        val authenticatedClient = OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .build()
+
+        val authenticatedRetrofit = Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .client(authenticatedClient)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+
+        return authenticatedRetrofit.create(UserApi::class.java)
     }
 }
