@@ -57,6 +57,12 @@
     <string name="profile_title">Profile</string>
     <string name="logout_button">Log out</string>
     <string name="language_label">Language</string>
+    <string name="delete_account_button">Delete Account</string>
+    <string name="delete_account_title">Delete Account</string>
+    <string name="delete_account_confirmation">Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.</string>
+    <string name="delete_account_confirm">Delete</string>
+    <string name="delete_account_cancel">Cancel</string>
+    <string name="delete_account_error">Error deleting account</string>
 
     <!-- CV Detail Screen -->
     <string name="cv_detail_title">CV Detail</string>

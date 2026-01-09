@@ -57,6 +57,12 @@
     <string name="profile_title">Perfil</string>
     <string name="logout_button">Cerrar sesión</string>
     <string name="language_label">Idioma</string>
+    <string name="delete_account_button">Eliminar cuenta</string>
+    <string name="delete_account_title">Eliminar cuenta</string>
+    <string name="delete_account_confirmation">¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer y todos tus datos serán eliminados permanentemente.</string>
+    <string name="delete_account_confirm">Eliminar</string>
+    <string name="delete_account_cancel">Cancelar</string>
+    <string name="delete_account_error">Error al eliminar la cuenta</string>
 
     <!-- CV Detail Screen -->
     <string name="cv_detail_title">Detalle CV</string>
