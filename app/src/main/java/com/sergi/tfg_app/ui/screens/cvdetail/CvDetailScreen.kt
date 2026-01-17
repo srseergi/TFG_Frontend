@@ -3,6 +3,7 @@ package com.sergi.tfg_app.ui.screens.cvdetail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -17,9 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.sergi.tfg_app.R
-import com.sergi.tfg_app.ui.theme.BluePrimary
-import com.sergi.tfg_app.ui.theme.GrayLight
-import com.sergi.tfg_app.ui.theme.GrayMedium
+import com.sergi.tfg_app.ui.theme.InfoBlue
+import com.sergi.tfg_app.ui.theme.Stone100
+import com.sergi.tfg_app.ui.theme.Stone300
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +37,10 @@ fun CvDetailScreen(
             title = { Text(stringResource(R.string.error)) },
             text = { Text((state.downloadState as DownloadState.Error).message) },
             confirmButton = {
-                TextButton(onClick = { viewModel.resetDownloadState() }) {
+                TextButton(
+                    onClick = { viewModel.resetDownloadState() },
+                    shape = RoundedCornerShape(4.dp)
+                ) {
                     Text(stringResource(R.string.accept))
                 }
             }
@@ -49,7 +53,10 @@ fun CvDetailScreen(
             title = { Text(stringResource(R.string.error)) },
             text = { Text((state.originalDownloadState as DownloadState.Error).message) },
             confirmButton = {
-                TextButton(onClick = { viewModel.resetOriginalDownloadState() }) {
+                TextButton(
+                    onClick = { viewModel.resetOriginalDownloadState() },
+                    shape = RoundedCornerShape(4.dp)
+                ) {
                     Text(stringResource(R.string.accept))
                 }
             }
@@ -96,7 +103,10 @@ fun CvDetailScreen(
                             color = MaterialTheme.colorScheme.error
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.retry() }) {
+                        Button(
+                            onClick = { viewModel.retry() },
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
                             Text(stringResource(R.string.retry))
                         }
                     }
@@ -175,7 +185,7 @@ fun CvDetailScreen(
                         item {
                             SectionHeader(
                                 title = stringResource(R.string.section_recommendations),
-                                color = BluePrimary
+                                color = InfoBlue
                             )
                         }
                         items(feedback.recomendaciones) { item ->
@@ -203,7 +213,7 @@ private fun CvCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = GrayLight
+            containerColor = Stone100
         )
     ) {
         Column(
@@ -227,7 +237,8 @@ private fun CvCard(
             Button(
                 onClick = onDownloadClick,
                 enabled = !isDownloading,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp)
             ) {
                 if (isDownloading) {
                     CircularProgressIndicator(
@@ -275,7 +286,7 @@ private fun FeedbackItem(text: String) {
                 modifier = Modifier
                     .size(8.dp)
                     .background(
-                        color = GrayMedium,
+                        color = Stone300,
                         shape = MaterialTheme.shapes.small
                     )
             )
