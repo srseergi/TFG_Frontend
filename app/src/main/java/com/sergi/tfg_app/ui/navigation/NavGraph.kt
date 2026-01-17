@@ -1,5 +1,10 @@
 package com.sergi.tfg_app.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -100,7 +105,13 @@ fun NavGraph(navController: NavHostController) {
             startDestination = Routes.Login.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(Routes.Login.route) {
+            composable(
+                route = Routes.Login.route,
+                enterTransition = { fadeIn(animationSpec = tween(400)) },
+                exitTransition = { fadeOut(animationSpec = tween(400)) },
+                popEnterTransition = { fadeIn(animationSpec = tween(400)) },
+                popExitTransition = { fadeOut(animationSpec = tween(400)) }
+            ) {
                 LoginScreen(
                     viewModel = loginViewModel,
                     onLoginSuccess = {
@@ -117,7 +128,13 @@ fun NavGraph(navController: NavHostController) {
                 )
             }
 
-            composable(Routes.Register.route) {
+            composable(
+                route = Routes.Register.route,
+                enterTransition = { fadeIn(animationSpec = tween(400)) },
+                exitTransition = { fadeOut(animationSpec = tween(400)) },
+                popEnterTransition = { fadeIn(animationSpec = tween(400)) },
+                popExitTransition = { fadeOut(animationSpec = tween(400)) }
+            ) {
                 RegisterScreen(
                     viewModel = registerViewModel,
                     onRegisterSuccess = {
@@ -134,7 +151,38 @@ fun NavGraph(navController: NavHostController) {
                 )
             }
 
-            composable(Routes.Home.route) {
+            composable(
+                route = Routes.Home.route,
+                enterTransition = {
+                    val fromIndex = getRouteIndex(initialState.destination.route)
+                    val toIndex = 0
+                    if (fromIndex == -1) fadeIn(tween(400))
+                    else slideInHorizontally(
+                        initialOffsetX = { if (fromIndex > toIndex) -it else it },
+                        animationSpec = tween(300)
+                    )
+                },
+                exitTransition = {
+                    val toIndex = getRouteIndex(targetState.destination.route)
+                    if (toIndex == -1) fadeOut(tween(400))
+                    else slideOutHorizontally(
+                        targetOffsetX = { if (toIndex > 0) -it else it },
+                        animationSpec = tween(300)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { -it },
+                        animationSpec = tween(300)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(300)
+                    )
+                }
+            ) {
                 HomeScreen(
                     viewModel = homeViewModel,
                     onCvReady = { cvId ->
@@ -143,7 +191,37 @@ fun NavGraph(navController: NavHostController) {
                 )
             }
 
-            composable(Routes.Gallery.route) {
+            composable(
+                route = Routes.Gallery.route,
+                enterTransition = {
+                    val fromIndex = getRouteIndex(initialState.destination.route)
+                    val toIndex = 1
+                    slideInHorizontally(
+                        initialOffsetX = { if (fromIndex > toIndex) -it else it },
+                        animationSpec = tween(300)
+                    )
+                },
+                exitTransition = {
+                    val fromIndex = 1
+                    val toIndex = getRouteIndex(targetState.destination.route)
+                    slideOutHorizontally(
+                        targetOffsetX = { if (toIndex > fromIndex) -it else it },
+                        animationSpec = tween(300)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { -it },
+                        animationSpec = tween(300)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { it },
+                        animationSpec = tween(300)
+                    )
+                }
+            ) {
                 GalleryScreen(
                     viewModel = galleryViewModel,
                     onCvClick = { cvId ->
@@ -152,7 +230,37 @@ fun NavGraph(navController: NavHostController) {
                 )
             }
 
-            composable(Routes.Profile.route) {
+            composable(
+                route = Routes.Profile.route,
+                enterTransition = {
+                    val fromIndex = getRouteIndex(initialState.destination.route)
+                    val toIndex = 2
+                    slideInHorizontally(
+                        initialOffsetX = { if (fromIndex > toIndex) -it else it },
+                        animationSpec = tween(300)
+                    )
+                },
+                exitTransition = {
+                    val toIndex = getRouteIndex(targetState.destination.route)
+                    if (toIndex == -1) fadeOut(tween(400))
+                    else slideOutHorizontally(
+                        targetOffsetX = { if (toIndex > 2) -it else it },
+                        animationSpec = tween(300)
+                    )
+                },
+                popEnterTransition = {
+                    slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(300)
+                    )
+                },
+                popExitTransition = {
+                    slideOutHorizontally(
+                        targetOffsetX = { -it },
+                        animationSpec = tween(300)
+                    )
+                }
+            ) {
                 ProfileScreen(
                     viewModel = profileViewModel,
                     onLogoutClick = {
@@ -181,5 +289,14 @@ fun NavGraph(navController: NavHostController) {
                 )
             }
         }
+    }
+}
+
+private fun getRouteIndex(route: String?): Int {
+    return when (route) {
+        Routes.Home.route -> 0
+        Routes.Gallery.route -> 1
+        Routes.Profile.route -> 2
+        else -> -1
     }
 }

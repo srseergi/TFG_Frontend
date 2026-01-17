@@ -11,11 +11,16 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import com.sergi.tfg_app.R
+import com.sergi.tfg_app.ui.theme.AmberContainer
+import com.sergi.tfg_app.ui.theme.AmberPrimary
+import com.sergi.tfg_app.ui.theme.Stone400
+import com.sergi.tfg_app.ui.theme.Stone900
 
 sealed class BottomNavItem(
     val route: String,
@@ -56,7 +61,9 @@ fun BottomNavBar(
         BottomNavItem.Profile
     )
 
-    NavigationBar {
+    NavigationBar(
+        containerColor = Stone900
+    ) {
         items.forEach { item ->
             val isSelected = currentRoute == item.route
             val label = stringResource(item.labelResId)
@@ -70,7 +77,14 @@ fun BottomNavBar(
                 },
                 label = { Text(label) },
                 selected = isSelected,
-                onClick = { onNavigate(item.route) }
+                onClick = { onNavigate(item.route) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = AmberPrimary,
+                    selectedTextColor = AmberPrimary,
+                    indicatorColor = AmberContainer,
+                    unselectedIconColor = Stone400,
+                    unselectedTextColor = Stone400
+                )
             )
         }
     }

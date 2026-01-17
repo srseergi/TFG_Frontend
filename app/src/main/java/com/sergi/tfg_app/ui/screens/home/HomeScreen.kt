@@ -3,11 +3,15 @@ package com.sergi.tfg_app.ui.screens.home
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -54,7 +58,10 @@ fun HomeScreen(
             title = { Text(stringResource(R.string.error)) },
             text = { Text((homeState as HomeState.Error).message) },
             confirmButton = {
-                TextButton(onClick = { viewModel.dismissError() }) {
+                TextButton(
+                    onClick = { viewModel.dismissError() },
+                    shape = RoundedCornerShape(4.dp)
+                ) {
                     Text(stringResource(R.string.accept))
                 }
             }
@@ -130,6 +137,20 @@ private fun UploadForm(
     onSubmit: () -> Unit,
     isEnabled: Boolean
 ) {
+    var hadFile by remember { mutableStateOf(false) }
+    val buttonScale = remember { Animatable(1f) }
+
+    LaunchedEffect(selectedFileName) {
+        if (selectedFileName != null && !hadFile) {
+            hadFile = true
+            buttonScale.animateTo(1.15f, animationSpec = spring(dampingRatio = 0.3f))
+            buttonScale.animateTo(1f, animationSpec = spring(dampingRatio = 0.5f))
+        } else if (selectedFileName == null) {
+            hadFile = false
+            buttonScale.snapTo(1f)
+        }
+    }
+
     OutlinedTextField(
         value = title,
         onValueChange = onTitleChange,
@@ -157,7 +178,10 @@ private fun UploadForm(
     OutlinedButton(
         onClick = onSelectFile,
         enabled = isEnabled,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .scale(buttonScale.value),
+        shape = RoundedCornerShape(4.dp)
     ) {
         Text(selectedFileName ?: stringResource(R.string.select_pdf_file))
     }
@@ -167,7 +191,8 @@ private fun UploadForm(
     Button(
         onClick = onSubmit,
         enabled = isEnabled && selectedFileName != null,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(4.dp)
     ) {
         Text(stringResource(R.string.improve_cv_button))
     }

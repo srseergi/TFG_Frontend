@@ -1,6 +1,7 @@
 package com.sergi.tfg_app.ui.screens.profile
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -46,13 +47,17 @@ fun ProfileScreen(
                     },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = MaterialTheme.colorScheme.error
-                    )
+                    ),
+                    shape = RoundedCornerShape(4.dp)
                 ) {
                     Text(stringResource(R.string.delete_account_confirm))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteConfirmDialog = false }) {
+                TextButton(
+                    onClick = { showDeleteConfirmDialog = false },
+                    shape = RoundedCornerShape(4.dp)
+                ) {
                     Text(stringResource(R.string.delete_account_cancel))
                 }
             }
@@ -65,7 +70,10 @@ fun ProfileScreen(
             title = { Text(stringResource(R.string.error)) },
             text = { Text(profileState.deleteError ?: "") },
             confirmButton = {
-                TextButton(onClick = { viewModel.clearDeleteError() }) {
+                TextButton(
+                    onClick = { viewModel.clearDeleteError() },
+                    shape = RoundedCornerShape(4.dp)
+                ) {
                     Text(stringResource(R.string.accept))
                 }
             }
@@ -206,7 +214,8 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.error
-                        )
+                        ),
+                        shape = RoundedCornerShape(4.dp)
                     ) {
                         Text(stringResource(R.string.logout_button))
                     }
@@ -218,7 +227,8 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colorScheme.error
-                        )
+                        ),
+                        shape = RoundedCornerShape(4.dp)
                     ) {
                         Text(stringResource(R.string.delete_account_button))
                     }

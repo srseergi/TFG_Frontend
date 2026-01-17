@@ -1,7 +1,6 @@
 package com.sergi.tfg_app.ui.theme
 
 import android.app.Activity
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -12,37 +11,73 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = BluePrimary,
-    secondary = BlueLight,
-    tertiary = BlueDark,
-    background = Black,
-    surface = Color(0xFF1C1C1C),
-    onPrimary = White,
-    onSecondary = Black,
+private val LightColorScheme = lightColorScheme(
+    primary = AmberPrimary,
+    onPrimary = Stone950,
+    primaryContainer = AmberContainer,
+    onPrimaryContainer = OnAmberContainer,
+
+    secondary = OrangePrimary,
+    onSecondary = White,
+    secondaryContainer = OrangeLight,
+    onSecondaryContainer = OrangeDark,
+
+    tertiary = AmberDark,
     onTertiary = White,
-    onBackground = White,
-    onSurface = White,
-    error = RedError
+    tertiaryContainer = AmberLight,
+    onTertiaryContainer = AmberDark,
+
+    background = Stone50,
+    onBackground = Stone700,
+    surface = White,
+    onSurface = Stone700,
+    surfaceVariant = Stone100,
+    onSurfaceVariant = Stone500,
+
+    outline = Stone300,
+    outlineVariant = Stone200,
+
+    error = ErrorRed,
+    onError = White,
+    errorContainer = ErrorRedLight,
+    onErrorContainer = ErrorRedDark
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = BluePrimary,
-    secondary = BlueLight,
-    tertiary = BlueDark,
-    background = White,
-    surface = GrayLight,
-    onPrimary = White,
-    onSecondary = Black,
-    onTertiary = White,
-    onBackground = Black,
-    onSurface = Black,
-    error = RedError
+private val DarkColorScheme = darkColorScheme(
+    primary = AmberPrimary,
+    onPrimary = Stone950,
+    primaryContainer = AmberDark,
+    onPrimaryContainer = AmberLight,
+
+    secondary = OrangePrimary,
+    onSecondary = Stone950,
+    secondaryContainer = OrangeDark,
+    onSecondaryContainer = OrangeLight,
+
+    tertiary = AmberLight,
+    onTertiary = Stone950,
+    tertiaryContainer = AmberDark,
+    onTertiaryContainer = AmberLight,
+
+    background = Stone950,
+    onBackground = Stone100,
+    surface = Stone900,
+    onSurface = Stone100,
+    surfaceVariant = Stone800,
+    onSurfaceVariant = Stone400,
+
+    outline = Stone600,
+    outlineVariant = Stone700,
+
+    error = ErrorRed,
+    onError = White,
+    errorContainer = ErrorRedDark,
+    onErrorContainer = ErrorRedLight
 )
 
 @Composable
 fun TFG_AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
@@ -51,14 +86,15 @@ fun TFG_AppTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            window.statusBarColor = colorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }

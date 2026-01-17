@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -122,7 +123,8 @@ fun LoginScreen(
             Button(
                 onClick = { viewModel.login(username, password) },
                 enabled = loginState !is AuthState.Loading,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp)
             ) {
                 if (loginState is AuthState.Loading) {
                     CircularProgressIndicator(
@@ -171,6 +173,7 @@ fun LoginScreen(
                 },
                 enabled = loginState !is AuthState.Loading,
                 modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(4.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
             ) {
                 Image(
@@ -186,7 +189,8 @@ fun LoginScreen(
 
             TextButton(
                 onClick = onRegisterClick,
-                enabled = loginState !is AuthState.Loading
+                enabled = loginState !is AuthState.Loading,
+                shape = RoundedCornerShape(4.dp)
             ) {
                 Text(stringResource(R.string.no_account_register))
             }

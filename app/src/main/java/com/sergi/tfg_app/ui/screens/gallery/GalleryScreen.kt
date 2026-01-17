@@ -3,6 +3,7 @@ package com.sergi.tfg_app.ui.screens.gallery
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
@@ -37,7 +38,11 @@ fun GalleryScreen(
         viewModel.loadCvList()
     }
 
-    val filteredList = viewModel.filteredCvList
+    val filteredList = if (state.searchQuery.isBlank()) {
+        state.cvList
+    } else {
+        state.cvList.filter { it.title.contains(state.searchQuery, ignoreCase = true) }
+    }
 
     Scaffold(
         topBar = {
@@ -99,7 +104,10 @@ fun GalleryScreen(
                                 textAlign = TextAlign.Center
                             )
                             Spacer(modifier = Modifier.height(16.dp))
-                            Button(onClick = { viewModel.retry() }) {
+                            Button(
+                                onClick = { viewModel.retry() },
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
                                 Text(stringResource(R.string.retry))
                             }
                         }
@@ -153,6 +161,10 @@ fun CvGridItem(
             .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp,
+            pressedElevation = 2.dp
         )
     ) {
         Column(
